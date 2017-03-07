@@ -102,10 +102,10 @@ public:
      * Time complexity: O(n). Space complexity: O(1).
      * @param nums
      */
-    void rotate4(vector<int>& nums)
+    void rotate4(vector<int>& nums, int k)
     {
         int n = nums.size();
-        for (; k = k%n; n -= k, nums += k)
+        //for (; k = k%n; n -= k, n += k)
         {
             // Swap the last k elements with the first k elements.
             // The last k elements will be in the correct positions

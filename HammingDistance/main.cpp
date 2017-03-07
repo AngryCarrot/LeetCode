@@ -2,6 +2,14 @@
 
 using namespace std;
 
+class Solution
+{
+public:
+    int hammingDistance(int x, int y)
+    {
+        return 0;
+    }
+};
 
 
 int main()

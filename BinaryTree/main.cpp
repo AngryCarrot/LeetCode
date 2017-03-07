@@ -2,6 +2,7 @@
 #include <queue>
 #include <vector>
 #include <stack>
+#include <map>
 #include <algorithm>
 using namespace std;
 
@@ -16,6 +17,144 @@ struct TreeNode {
 class BinaryTree
 {
 public:
+    /** 337. House Robber III
+     * @brief rob
+     * @param root
+     * @return
+     * @example 思路不对忽略了[2,1,3,null,4]情况下，可以同时去第二层和第三层，只要这两层被用到的数字不是直接相连就行
+     *      2
+     *  1       3
+     *    4
+     * 3+4=7
+     */
+    int rob3(TreeNode* root)
+    {
+        // level order to preserve each sum of level
+        // dynamic program like rob1 on each level's sum
+        if (!root)
+        {
+            return 0;
+        }
+        if (!root->left && !root->right)
+        {
+            return root->val;
+        }
+        vector<int> nums;
+        queue<TreeNode *> q;
+        q.push(root);
+        while (q.empty())
+        {
+            int sum = 0;
+            int size = q.size();
+            for (int i = 0; i != size; ++i)
+            {
+                TreeNode *t = q.front();
+                q.pop();
+                sum += t->val;
+                if (t->left)
+                {
+                    q.push(t->left);
+                }
+                if (t->right)
+                {
+                    q.push(t->right);
+                }
+            }
+            nums.push_back(sum);
+        }
+        const int length = nums.size();
+        int *p = new int[length];
+        p[0] = nums[0];
+        p[1] = max(nums[1], p[0]);
+        for (int i = 0; i != length; ++i)
+        {
+            p[i] = max(p[i - 2] + nums[i], p[i - 1]);
+        }
+        int answer = p[length - 1];
+        delete []p;
+        return answer;
+    }
+/*
+Step I -- Think naively
+
+At first glance, the problem exhibits the feature of "optimal substructure": if we want to rob maximum amount of money from current binary tree (rooted at root), we surely hope that we can do the same to its left and right subtrees.
+
+So going along this line, let's define the function rob(root) which will return the maximum amount of money that we can rob for the binary tree rooted at root; the key now is to construct the solution to the original problem from solutions to its subproblems, i.e., how to get rob(root) from rob(root.left), rob(root.right), ... etc.
+
+Apparently the analyses above suggest a recursive solution. And for recursion, it's always worthwhile figuring out the following two properties:
+
+    Termination condition: when do we know the answer to rob(root) without any calculation? Of course when the tree is empty -- we've got nothing to rob so the amount of money is zero.
+
+    Recurrence relation: i.e., how to get rob(root) from rob(root.left), rob(root.right), ... etc. From the point of view of the tree root, there are only two scenarios at the end: root is robbed or is not. If it is, due to the constraint that "we cannot rob any two directly-linked houses", the next level of subtrees that are available would be the four "grandchild-subtrees" (root.left.left, root.left.right, root.right.left, root.right.right). However if root is not robbed, the next level of available subtrees would just be the two "child-subtrees" (root.left, root.right). We only need to choose the scenario which yields the larger amount of money.
+
+
+Step II -- Think one step further
+
+In step I, we only considered the aspect of "optimal substructure", but think little about the possibilities of overlapping of the subproblems. For example, to obtain rob(root), we need rob(root.left), rob(root.right), rob(root.left.left), rob(root.left.right), rob(root.right.left), rob(root.right.right); but to get rob(root.left), we also need rob(root.left.left), rob(root.left.right), similarly for rob(root.right). The naive solution above computed these subproblems repeatedly, which resulted in bad time performance. Now if you recall the two conditions for dynamic programming: "optimal substructure" + "overlapping of subproblems", we actually have a DP problem. A naive way to implement DP here is to use a hash map to record the results for visited subtrees.
+
+
+Step III -- Think one step back
+
+In step I, we defined our problem as rob(root), which will yield the maximum amount of money that can be robbed of the binary tree rooted at root. This leads to the DP problem summarized in step II.
+
+Now let's take one step back and ask why we have overlapping subproblems. If you trace all the way back to the beginning, you'll find the answer lies in the way how we have defined rob(root). As I mentioned, for each tree root, there are two scenarios: it is robbed or is not. rob(root) does not distinguish between these two cases, so "information is lost as the recursion goes deeper and deeper", which results in repeated subproblems.
+
+If we were able to maintain the information about the two scenarios for each tree root, let's see how it plays out. Redefine rob(root) as a new function which will return an array of two elements, the first element of which denotes the maximum amount of money that can be robbed if root is not robbed, while the second element signifies the maximum amount of money robbed if it is robbed.
+
+Let's relate rob(root) to rob(root.left) and rob(root.right)..., etc. For the 1st element of rob(root), we only need to sum up the larger elements of rob(root.left) and rob(root.right), respectively, since root is not robbed and we are free to rob its left and right subtrees. For the 2nd element of rob(root), however, we only need to add up the 1st elements of rob(root.left) and rob(root.right), respectively, plus the value robbed from root itself, since in this case it's guaranteed that we cannot rob the nodes of root.left and root.right.
+
+As you can see, by keeping track of the information of both scenarios, we decoupled the subproblems and the solution essentially boiled down to a greedy one.
+*/
+    // TLE
+    int rob3NB(TreeNode *root)
+    {
+        map<TreeNode*, int> m;
+        return rob3NBSub(root, m);
+    }
+    int rob3NBSub(TreeNode *root, map<TreeNode*, int> m)
+    {
+        if (!root)
+        {
+            return 0;
+        }
+        auto search = m.find(root);
+        if (search != m.end())
+        {
+            return search->second;
+        }
+        int value = 0;
+        if (root->left)
+        {
+            value += this->rob3NBSub(root->left->left, m) + this->rob3NBSub(root->left->right, m);
+        }
+        if (root->right)
+        {
+            value += this->rob3NBSub(root->right->left, m) + this->rob3NBSub(root->right->right, m);
+        }
+        value = max(value + root->val, this->rob3NBSub(root->left, m) + this->rob3NBSub(root->right, m));
+        m[root] = value;
+        return value;
+    }
+    int rob3NBNB(TreeNode *root)
+    {
+        vector<int> result = this->rob3NBNBSub(root);
+        return max(result[0], result[1]);
+    }
+    vector<int> rob3NBNBSub(TreeNode *root)
+    {
+        if (!root)
+        {
+            return vector<int>(2, 0);
+        }
+        vector<int> left = this->rob3NBNBSub(root->left);
+        vector<int> right = this->rob3NBNBSub(root->right);
+
+        vector<int> result(2, 0);
+        result[0] = max(left[0], left[1]) + max(right[0], right[1]);
+        result[1] = root->val + left[0] + right[0];
+        return result;
+    }
+
     TreeNode* mirrorTree(TreeNode* root)
     {
         if (!root)

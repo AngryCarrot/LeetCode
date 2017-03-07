@@ -41,7 +41,7 @@ public:
         }
     }
     // Better solution
-    void moveZeroes(vector<int>& nums)
+    void moveZeroes_NB(vector<int>& nums)
     {
         int len = 0;
         for (int i = 0; i < nums.size(); ++i)

@@ -34,4 +34,7 @@ SUBDIRS += \
     FizzBuzz \
     PlusOne \
     ValidAnagram \
-    HammingDistance
+    HammingDistance \
+    IntersectionofTwoArrays \
+    utils \
+    35_SearchInsertPosition

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <set>
 #include <vector>
+#include <map>
+#include <algorithm>
 
 using namespace std;
 
@@ -30,7 +32,7 @@ public:
         return false;
     }
     // NB NB的解决方案：直接判断set和vector的长度大小
-    const bool containsDuplicate(vector<int> &nums)
+    bool containsDuplicate_NB(vector<int> &nums)
     {
         if (nums.empty())
         {

@@ -20,10 +20,10 @@ public:
      */
     vector<vector<int>> generate(int numRows)
     {
-        if (!numRows)
-        {
-            return;
-        }
+//        if (!numRows)
+//        {
+//            return NULL;
+//        }
         vector<vector<int>> result;
         for (int i = 0; i != numRows; ++i)
         {
