@@ -37,4 +37,5 @@ SUBDIRS += \
     HammingDistance \
     IntersectionofTwoArrays \
     utils \
-    35_SearchInsertPosition
+    35_SearchInsertPosition \
+    Stack

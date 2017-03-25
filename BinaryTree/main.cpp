@@ -17,6 +17,90 @@ struct TreeNode {
 class BinaryTree
 {
 public:
+    /** 106. Construct Binary Tree from Inorder and Postorder Traversal
+     * @brief buildTreeIP
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    TreeNode* buildTreeIP(vector<int>& inorder, vector<int>& postorder)
+    {
+        const int length = inorder.size();
+        TreeNode* root = this->buildTreeIP(inorder, postorder, 0, inorder.size(), 0, postorder.size());
+        return root;
+    }
+    TreeNode* buildTreeIP(vector<int> &inorder, vector<int> &postorder, int ii, int ij, int pi, int pj)
+    {
+        TreeNode* root = nullptr;
+        if (ii == ij || pi == pj)
+        {
+            return root;
+        }
+        root = new TreeNode(postorder[pj - 1]);
+        int idx = 0;
+        for (int i = 0; i < postorder.size(); ++i)
+        {
+            if (inorder[i] == root->val)
+            {
+                idx = i;
+                break;
+            }
+        }
+        int lenl = idx - ii;
+        int lenr = ij - idx - 1;
+
+        root->left = this->buildTreeIP(inorder, postorder, ii, ii+lenl, pi, pi + lenl);
+
+        root->right = this->buildTreeIP(inorder, postorder, idx + 1, idx + 1 + lenr, pj - 1 - lenr, pj - 1);
+
+        return root;
+    }
+
+    /** 105. Construct Binary Tree from Preorder and Inorder Traversal
+     * @brief buildTreePI
+     * @param preorder
+     * @param inorder
+     * @return
+     */
+    TreeNode* buildTreePI(vector<int>& preorder, vector<int>& inorder)
+    {
+        const int length = preorder.size();
+        TreeNode* root = buildTreePI(preorder, inorder, 0, length , 0, length);
+        return root;
+    }
+    TreeNode* buildTreePI(vector<int> &preorder, vector<int> &inorder, int pi, int pj, int ii, int ij)
+    {
+        // tree        8 4 5 3 7 3
+        // preorder    8 [4 3 3 7] [5]
+        // inorder     [3 3 4 7] 8 [5]
+        // 每次从 preorder 头部取一个值 mid，作为树的根节点
+        // 检查 mid 在 inorder 中 的位置，则 mid 前面部分将作为 树的左子树，右部分作为树的右子树
+
+        if(pi >= pj || ii >= pj)
+        {
+            return nullptr;
+        }
+
+        int mid = preorder[pi];
+        auto f = find(inorder.begin() + ii,inorder.begin() + ij,mid);
+
+        int dis = f - inorder.begin() - ii;
+
+        TreeNode* root = new TreeNode(mid);
+        root -> left = buildTreePI(preorder, inorder, pi + 1, pi + 1 + dis, ii, ii + dis);
+        root -> right = buildTreePI(preorder, inorder, pi + 1 + dis, pj, ii + dis + 1, ij);
+        return root;
+    }
+
+    /** 501. Find Mode in Binary Search Tree
+     * @brief findMode
+     * @details Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
+     * @param root
+     * @return
+     */
+    vector<int> findMode(TreeNode* root)
+    {
+    }
     /** 337. House Robber III
      * @brief rob
      * @param root
@@ -396,9 +480,27 @@ protected:
     }
 };
 
+void f(int a, int *b, int* &c)
+{
+    c = b;
+//    cout << *c << endl;
+//    cout << *b << endl;
+//    b = c;
+//    cout << *b << endl;
+}
+
 int main()
 {
     cout << "Hello World!" << endl;
+    int a = 10;
+    int b = 11;
+    int c = 12;
+    int *pa = &a;
+    int *pb = &b;
+    int *pc = &c;
+    cout << "before: " << *pc << endl;
+    f(a, pb, pc);
+    cout << "after: " << *pc << endl;
     return 0;
 }
 
