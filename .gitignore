@@ -3,6 +3,7 @@
 *.pro.user
 
 *.VC.db
+*.VC.opendb
 Debug
 Release
 _ReSharper*

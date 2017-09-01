@@ -24,6 +24,97 @@ struct Interval {
 class Solution
 {
 public:
+	/*59. Spiral Matrix II
+	蛇形填数*/
+	vector<vector<int>> generateMatrix(int n) {
+		int m = n;
+		//int n = 1;
+		vector<vector<int>> matrix(m, vector<int>(n, 0));
+		int i = 0;
+		int j = 0;
+		int count = 1;
+		int left = 0;
+		int right = n;
+		int top = 0;
+		int bottom = m;
+		while (count <= m * n)
+		{
+			for (int j = left; j < right; ++j)
+			{
+				matrix[top][j] = count++;
+			}
+			++top;
+			if (top == bottom) break;
+			for (int i = top; i < bottom; ++i)
+			{
+				matrix[i][right - 1] = count++;
+			}
+			--right;
+			if (right == left) break;
+			for (int j = right - 1; j >= left; --j)
+			{
+				matrix[bottom - 1][j] = count++;
+			}
+			--bottom;
+			for (int i = bottom - 1; i >= top; --i)
+			{
+				matrix[i][left] = count++;
+			}
+			++left;
+		}
+		return matrix;
+	}
+	/*54. Spiral Matrix
+	蛇形遍历*/
+	vector<int> spiralOrder(vector<vector<int>>& matrix) {
+		int m = matrix.size();
+		if (m == 0)
+		{
+			return{};
+		}
+		if (m == 1)
+		{
+			return matrix[0];
+		}
+		int n = matrix[0].size();
+		vector<int> result(m * n, 0);
+		int count = 0;
+
+		int left = 0;
+		int right = n;
+		int top = 0;
+		int bottom = m;
+		while (count < m * n)
+		{
+			// →
+			for (int j = left; j < right; ++j)
+			{
+				result[count++] = matrix[top][j];
+			}
+			++top;
+			if (top == bottom) break;
+			// ↓
+			for (int i = top; i < bottom; ++i)
+			{
+				result[count++] = matrix[i][right - 1];
+			}
+			--right;
+			if (right == left) break;
+			// ←
+			for (int j = right - 1; j >= left; --j)
+			{
+				result[count++] = matrix[bottom - 1][j];
+			}
+			--bottom;
+			// ↑
+			for (int i = bottom - 1; i >= top; --i)
+			{
+				result[count++] = matrix[i][left];
+			}
+			++left;
+		}
+		return result;
+	}
 	/*650. 2 Keys Keyboard
 	1. Copy all: partial copy is not allowed.
 	2. Paste: paste which are copied last time
