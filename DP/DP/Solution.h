@@ -167,9 +167,40 @@ public:
 
 	/*95. Unique Binary Search Trees II
 	Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+	这一题跟 241. different Ways to Add Parenthesis
 	*/
 	vector<TreeNode*> generateTrees(int n) 
 	{
+		if (n == 0)
+		{
+			return vector<TreeNode*>();
+		}
+		return generateTreesHelper(1, n);
+	}
+	vector<TreeNode*> generateTreesHelper(int start, int end)
+	{
+		vector<TreeNode*> results;
+		if (start > end)
+		{
+			results.emplace_back(nullptr);
+			return results;
+		}
+		for (int i = start; i <= end; ++i)
+		{
+			vector<TreeNode*> left = generateTreesHelper(start, i - 1);
+			vector<TreeNode*> right = generateTreesHelper(i + 1, end);
+			for (TreeNode* leftItem : left)
+			{
+				for (TreeNode* rightItem : right)
+				{
+					TreeNode* root = new TreeNode(i);
+					root->left = leftItem;
+					root->right = rightItem;
+					results.emplace_back(root);
+				}
+			}
+		}
+		return results;
 	}
 
 	/*516. Longest Palindromic Subsequence
