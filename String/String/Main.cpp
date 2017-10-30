@@ -126,6 +126,18 @@ int main()
 
 	n = 3;
 	sln.generateParenthesis(n);
+	
+	s = "";
+	sln.countBinarySubstrings(s);
+	s = "00110011";
+	sln.countBinarySubstrings(s);
+
+	string A = "abcd";
+	string B = "cdabcdab";
+	sln.repeatedStringMatch(A, B);
+	A = "bb";
+	B = "bbbbbbb";
+	sln.repeatedStringMatch(A, B);
 
 	return 0;
 }

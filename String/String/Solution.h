@@ -1392,5 +1392,63 @@ public:
 			str.pop_back();
 		}
 	}
+
+	/*696. Count Binary Substrings 
+	Give a string s, count the number of non-empty (contiguous) substrings that have the same number of 0's and 1's, and all the 0's and all the 1's in these substrings are grouped consecutively. 
+	Substrings that occur multiple times are counted the number of times they occur.*/
+	int countBinarySubstrings(string& s)
+	{
+		if (s.length() == 0)
+		{
+			return 0;
+		}
+		int results = 0;
+		for (int i = 0; i < s.length() - 1; ++i)
+		{
+			results += countBinarySubstrings(s, i, i + 1);
+		}
+		return results;
+	}
+	int countBinarySubstrings(string& s, int left, int right)
+	{
+		int res = 0;
+		int i = left;
+		int j = right;
+		while (i >= 0 && j < s.length() && s[i] == s[left] && s[j] == s[right] && s[left] != s[right])
+		{
+			--i;
+			++j;
+			++res;
+		}
+		return res;
+	}
+
+	/*686. Repeated String Match 
+	Given two strings A and B, find the minimum number of times A has to be repeated such that B is a substring of it. If no such solution, return -1.
+	For example, with A = "abcd" and B = "cdabcdab". 
+	Return 3, because by repeating A three times (“abcdabcdabcd”), B is a substring of it; and B is not a substring of A repeated two times ("abcdabcd"). */
+	// Approach #2: Rabin-Karp (Rolling Hash) [Accepted]
+	int repeatedStringMatch(string& A, string& B) 
+	{
+		int lengthA = A.length();
+		int lengthB = B.length();
+		if (lengthB == 0)
+		{
+			return 1;
+		}
+		string AT = A;
+		int upper = (lengthB - 2) / lengthA + 1;
+		int res = -1;
+		for (int i = 0; i <= upper; ++i)
+		{
+			if (A.find(B) != -1)
+			{
+				res = i + 1;
+				break;
+			}
+			A += AT;
+		}
+		return res;
+	}
 };
 
