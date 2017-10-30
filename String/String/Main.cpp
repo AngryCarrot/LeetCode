@@ -81,7 +81,7 @@ int main()
 
 	s = "2*3-4*5";
 	sln.diffWaysToCompute(s);
-
+	/*
 	vector<int> Nns = { 5000, 50000, 500000, 3000000, 5000000 };
 	double result = 0.0f;
 	srand(time(0));
@@ -108,6 +108,24 @@ int main()
 		cout << mm << " " << Nn << " " << (4.0f * mm / Nn) << endl;
 	}
 	cout << (result / Nns.size()) << endl;
+	*/
+	s = "42";
+	sln.calculate(s);
+	s = "3+2*2";
+	sln.calculate(s);
+	s = "3+4*2/4";
+	sln.calculate(s);
+	s = " 3/2";
+	sln.calculate(s); 
+	s = " 3+5 /  2";
+	sln.calculate(s);
+	s = "3+4*2/2-3*4*54/4";
+	sln.calculate(s);
+	s = "1*2-3/4+5*6-7*8+9/10";
+	sln.calculate(s);
+
+	n = 3;
+	sln.generateParenthesis(n);
 
 	return 0;
 }

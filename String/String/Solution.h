@@ -5,6 +5,7 @@
 #include <queue>
 #include <stack>
 #include <map>
+#include <set>
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -1237,6 +1238,159 @@ public:
 			break;
 		}
 		return result;
+	}
+
+	/*227. Basic Calculator II 
+	Implement a basic calculator to evaluate a simple expression string.
+	The expression string contains only non-negative integers, +, -, *, / operators and empty spaces . The integer division should truncate toward zero.
+	You may assume that the given expression is always valid.*/
+	int calculate(const string& s)
+	{
+		vector<pair<int, bool>> postExpr = convert2PostExpr(s);
+		stack<int> stk;
+		for (auto item : postExpr)
+		{
+			if (item.second)
+			{
+				int op2 = stk.top();
+				stk.pop();
+				int op1 = stk.top();
+				stk.pop();
+				stk.push(calc(op1, op2, item.first));
+				continue;
+			}
+			stk.push(item.first);
+		}
+		return stk.top();
+	}
+	bool isOperator(int c)
+	{
+		bool result = false;
+		switch (c)
+		{
+		case '+':
+		case '-':
+		case '*':
+		case '/':
+			result = true;
+			break;
+		default:
+			result = false;
+			break;
+		}
+		return result;
+	}
+	vector<pair<int, bool>> convert2PostExpr(const string& s)
+	{
+		vector<pair<int, bool>> results;
+		stack<int> stk;
+		int length = s.length();
+		for (int i = 0; i < length; ++i)
+		{
+			if (s[i] == ' ')
+			{
+				continue;
+			}
+			if (isOperator(s[i]))
+			{
+				if (stk.empty())
+				{
+					stk.push(s[i]);
+				}
+				else
+				{
+					// op1 >= op2
+					if (getPriority(stk.top()) >= getPriority(s[i]))
+					{
+						while (!stk.empty() && getPriority(stk.top()) >= getPriority(s[i]))
+						{
+							results.emplace_back(make_pair(stk.top(), true));
+							stk.pop();
+						}
+						stk.push(s[i]);
+					}
+					else
+					{
+						stk.push(s[i]);
+					}
+				}
+				continue;
+			}
+			int j = i;
+			while (j < length && s[j] >= '0' && s[j] <= '9')
+			{
+				++j;
+			}
+			results.emplace_back(make_pair(stoi(s.substr(i, j - i)), false));
+			i = j - 1;
+		}
+		while (!stk.empty())
+		{
+			results.emplace_back(make_pair(stk.top(), true));
+			stk.pop();
+		}
+		return results;
+	}
+	int getPriority(int op)
+	{
+		int p = 0;
+		switch (op)
+		{
+		case '+':
+		case '-':
+			p = 2;
+			break;
+		case '*':
+		case '/':
+			p = 3;
+			break;
+		case '^':
+			p = 4;
+			break;
+		case '(':
+			break;
+		case ')':
+			break;
+		default:
+			break;
+		}
+		return p;
+	}
+
+	/*22. Generate Parentheses 
+	Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses. */
+	vector<string> generateParenthesis(int n) 
+	{
+		set<string> s;
+		int m = n;
+		// n->#"(", m->#")"
+		string str = "";
+		generateParenthesis(s, str, n, m);
+		return vector<string>(begin(s), end(s));
+	}
+	void generateParenthesis(set<string>& s, string& str, int n, int m)
+	{
+		if (n == 0 && m == 0)
+		{
+			s.insert(str);
+			return;
+		}
+		if (n > m)
+		{
+			return;
+		}
+		if (n > 0)
+		{
+			str += "(";
+			generateParenthesis(s, str, n - 1, m);
+			str.pop_back();
+		}
+		if (m > 0)
+		{
+			str += ")";
+			generateParenthesis(s, str, n, m - 1);
+			str.pop_back();
+		}
 	}
 };
 
